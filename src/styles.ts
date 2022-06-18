@@ -5,8 +5,10 @@ export const MainWrapper = styled.main`
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   flex-grow: 1;
   padding: 20px 0;
+  gap: 20px;
 `
 
 export const SearchWrapper = styled.div`
@@ -22,9 +24,3 @@ export const Inputs = styled.div`
   gap: 15px;
 `
 
-export const WeatherWrapper = styled.div`
-  padding-bottom: 60px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-gap: 20px;
-`
