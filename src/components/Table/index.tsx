@@ -3,7 +3,6 @@ import React, {Dispatch, SetStateAction} from 'react'
 import {Space, Table} from 'antd'
 import 'antd/dist/antd.css'
 import {ITable} from '../../models/ITable'
-import './styles.modules.css'
 
 
 type CityTableProps = {
@@ -13,12 +12,11 @@ type CityTableProps = {
 }
 
 const CityTable = ({cities, setCities, setCoords}: CityTableProps) => {
-  const deleteRecordHandler = (dt: number, index: number) => {
-    if (index !== 0) {
-      const filteredCities = cities.filter(city => city.dt !== dt)
-      setCities(filteredCities)
-      localStorage.setItem('tableData', JSON.stringify(filteredCities))
-    }
+
+  const deleteRecordHandler = (dt: number) => {
+    const filteredCities = cities.filter(city => city.dt !== dt)
+    setCities(filteredCities)
+    localStorage.setItem('tableData', JSON.stringify(filteredCities))
   }
 
   const columns: ColumnsType<ITable> = [
@@ -26,33 +24,68 @@ const CityTable = ({cities, setCities, setCoords}: CityTableProps) => {
       title: 'Request Time',
       dataIndex: 'dt',
       key: 'dt',
+      children: [
+        {
+          title: cities[0].dt,
+          dataIndex: 'dt',
+          key: 'dt2',
+        },
+      ],
     },
     {
       title: 'Country',
       dataIndex: 'country',
       key: 'country',
+      children: [
+        {
+          title: cities[0].country,
+          dataIndex: 'country',
+          key: 'country2',
+        },
+      ],
     },
     {
       title: 'City',
       dataIndex: 'city',
       key: 'city',
+      children: [
+        {
+          title: cities[0].city,
+          dataIndex: 'city',
+          key: 'city2',
+        },
+      ],
     },
     {
       title: 'Latitude',
       dataIndex: 'lat',
       key: 'lat',
+      children: [
+        {
+          title: cities[0].lat,
+          dataIndex: 'lat',
+          key: 'lat2',
+        },
+      ],
     },
     {
       title: 'Longitude',
       dataIndex: 'lon',
       key: 'lon',
+      children: [
+        {
+          title: cities[0].lon,
+          dataIndex: 'lon',
+          key: 'lon2',
+        },
+      ],
     },
     {
       title: '',
       key: 'action',
-      render: (_, record, index) => (
+      render: (_, record) => (
         <Space size="middle">
-          <a onClick={() => deleteRecordHandler(record.dt, index)}>Delete</a>
+          <a onClick={() => deleteRecordHandler(record.dt)}>Delete</a>
         </Space>
       ),
     },
@@ -67,11 +100,11 @@ const CityTable = ({cities, setCities, setCoords}: CityTableProps) => {
           },
         }
       }}
-      rowClassName={(record, index) => index === 0 ? 'table-first-row' : ''}
-      pagination={{defaultPageSize: 5}}
+      pagination={{defaultPageSize: 4, hideOnSinglePage: true}}
       columns={columns}
-      dataSource={cities}
+      dataSource={cities.slice(1)}
       rowKey={'dt'}
+      style={{overflowX: 'auto'}}
     />
   )
 }

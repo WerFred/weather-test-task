@@ -4,6 +4,7 @@ import BaseContainer from './components/BaseContainer'
 import Button from './components/Button'
 import Header from './components/Header'
 import Input from './components/Input'
+import Loader from './components/Loader'
 import CityTable from './components/Table'
 import WeatherGrid from './components/WeatherGrid'
 import {useDefaultWeatherData} from './hooks/useDefaultWeatherData'
@@ -18,7 +19,7 @@ function App() {
   const [cities, setCities] = useState<ITable[]>(JSON.parse(localStorage.getItem('tableData')!) ?? [])
 
   const [weatherData, setWeatherData] = useState<WeatherResponse | null>()
-  const {data} = useDefaultWeatherData()
+  const {data, isLoading} = useDefaultWeatherData()
 
   useEffect(() => {
     setWeatherData(data)
@@ -46,6 +47,10 @@ function App() {
   const clickHandler = async () => {
     const response = await axios.get(`https://fcc-weather-api.glitch.me/api/current?lat=${coords.lat}&lon=${coords.lon}`)
     setWeatherData(response.data)
+  }
+
+  if (isLoading) {
+    return <Loader />
   }
 
   return (
