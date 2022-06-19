@@ -19,7 +19,7 @@ function App() {
   const [cities, setCities] = useState<ITable[]>(JSON.parse(localStorage.getItem('tableData')!) ?? [])
 
   const [weatherData, setWeatherData] = useState<WeatherResponse | null>()
-  const {data, isLoading} = useDefaultWeatherData()
+  const {data, isError} = useDefaultWeatherData()
 
   useEffect(() => {
     setWeatherData(data)
@@ -28,28 +28,31 @@ function App() {
   useEffect(() => {
     if (weatherData) {
       setCities(prevCities => {
-        if (prevCities) {
-          let index = prevCities.findIndex(city => city.city === weatherData.name)
-          if (index >= 0) {
-            prevCities[index] = createTableObject(weatherData)
-            return [...prevCities]
-          }
+        if (weatherData.name === data?.name) {
+          return [...prevCities]
+        }
+        let index = prevCities.findIndex(city => city.city === weatherData.name)
+        if (index >= 0) {
+          prevCities[index] = createTableObject(weatherData)
+          return [...prevCities]
         }
         return [...prevCities, createTableObject(weatherData)]
       })
     }
-  }, [weatherData])
+  }, [data, weatherData])
 
   useEffect(() => {
     localStorage.setItem('tableData', JSON.stringify(cities))
   }, [cities])
 
   const clickHandler = async () => {
-    const response = await axios.get(`https://fcc-weather-api.glitch.me/api/current?lat=${coords.lat}&lon=${coords.lon}`)
-    setWeatherData(response.data)
+    const response = await axios.get<WeatherResponse>(`https://fcc-weather-api.glitch.me/api/current?lat=${coords.lat}&lon=${coords.lon}`)
+    if (response.data.name) {
+      setWeatherData(response.data)
+    }
   }
 
-  if (isLoading) {
+  if (isError) {
     return <Loader />
   }
 
@@ -79,7 +82,7 @@ function App() {
           <Button onClick={clickHandler}>Get weather</Button>
         </Styles.SearchWrapper>
         {weatherData && <WeatherGrid info={weatherData} />}
-        {weatherData && <CityTable cities={cities} setCoords={setCoords} setCities={setCities} />}
+        {cities.length > 0 && <CityTable cities={cities} setCoords={setCoords} setCities={setCities} />}
       </Styles.MainWrapper>
     </BaseContainer>
   )

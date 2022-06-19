@@ -10,11 +10,10 @@ const $weatherFetcher = async (url: string) => {
 
 export function useDefaultWeatherData() {
   const {lon, lat} = useCurrentLocation()
-  const {data, error} = useSWR(`https://fcc-weather-api.glitch.me/api/current?lat=${lat?.toFixed(1)}&lon=${lon?.toFixed(1)}`, $weatherFetcher)
+  const {data, error} = useSWR(lon && lat ? `https://fcc-weather-api.glitch.me/api/current?lat=${lat.toFixed(1)}&lon=${lon.toFixed(1)}` : null, $weatherFetcher)
 
   return {
     data: data,
-    isLoading: !error && !data,
     isError: error,
   }
 }

@@ -1,8 +1,10 @@
 import {ColumnsType} from 'antd/es/table/Table'
-import React, {Dispatch, SetStateAction} from 'react'
+import React, {Dispatch, SetStateAction, useEffect, useState} from 'react'
 import {Space, Table} from 'antd'
 import 'antd/dist/antd.css'
+import {useDefaultWeatherData} from '../../hooks/useDefaultWeatherData'
 import {ITable} from '../../models/ITable'
+import {createTableObject} from '../../utils/createTableObject'
 
 
 type CityTableProps = {
@@ -12,6 +14,14 @@ type CityTableProps = {
 }
 
 const CityTable = ({cities, setCities, setCoords}: CityTableProps) => {
+  const [baseLocation, setBaseLocation] = useState<ITable>({} as ITable)
+  const {data} = useDefaultWeatherData()
+
+  useEffect(() => {
+    if (data) {
+      setBaseLocation(createTableObject(data))
+    }
+  }, [data])
 
   const deleteRecordHandler = (dt: number) => {
     const filteredCities = cities.filter(city => city.dt !== dt)
@@ -26,7 +36,7 @@ const CityTable = ({cities, setCities, setCoords}: CityTableProps) => {
       key: 'dt',
       children: [
         {
-          title: cities[0].dt,
+          title: baseLocation?.dt,
           dataIndex: 'dt',
           key: 'dt2',
         },
@@ -38,7 +48,7 @@ const CityTable = ({cities, setCities, setCoords}: CityTableProps) => {
       key: 'country',
       children: [
         {
-          title: cities[0].country,
+          title: baseLocation?.country,
           dataIndex: 'country',
           key: 'country2',
         },
@@ -50,7 +60,7 @@ const CityTable = ({cities, setCities, setCoords}: CityTableProps) => {
       key: 'city',
       children: [
         {
-          title: cities[0].city,
+          title: baseLocation?.city,
           dataIndex: 'city',
           key: 'city2',
         },
@@ -62,7 +72,7 @@ const CityTable = ({cities, setCities, setCoords}: CityTableProps) => {
       key: 'lat',
       children: [
         {
-          title: cities[0].lat,
+          title: baseLocation?.lat,
           dataIndex: 'lat',
           key: 'lat2',
         },
@@ -74,7 +84,7 @@ const CityTable = ({cities, setCities, setCoords}: CityTableProps) => {
       key: 'lon',
       children: [
         {
-          title: cities[0].lon,
+          title: baseLocation?.lon,
           dataIndex: 'lon',
           key: 'lon2',
         },
@@ -102,7 +112,7 @@ const CityTable = ({cities, setCities, setCoords}: CityTableProps) => {
       }}
       pagination={{defaultPageSize: 4, hideOnSinglePage: true}}
       columns={columns}
-      dataSource={cities.slice(1)}
+      dataSource={cities}
       rowKey={'dt'}
       style={{overflowX: 'auto'}}
     />
